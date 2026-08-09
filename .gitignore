@@ -1,0 +1,42 @@
+# Gradle / Loom
+build/
+.gradle/
+out/
+bin/
+libs/
+output/
+classes/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode
+.settings
+.classpath
+.project
+*.launch
+
+# 运行目录（含本地凭证 config/mcms.json、下载资源）
+run/
+
+# 逆向分析临时文件
+recon/
+
+# 本机 truststore（jdk cacerts 修复用，不入库）
+gradle/truststore.jks
+gradle/steam302-root.cer
+gradle/steamcommunity302.cer
+gradle/hotswap-agent.jar
+
+# 日志/临时
+*.log
+build.pid
+launch.log
+launch.pid
+hs_err_pid*.log
+
+# OS
+Thumbs.db
+.DS_Store

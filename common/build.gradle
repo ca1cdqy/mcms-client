@@ -1,0 +1,26 @@
+architectury {
+    common(rootProject.enabled_platforms.split(","))
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/mcms.accesswidener")
+}
+
+dependencies {
+    // 仅用于 @Environment 等注解与 mixin 依赖，不要使用 loader 的其他类
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+}
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = rootProject.archives_base_name
+            from components.java
+        }
+    }
+
+    repositories {
+        // Add repositories to publish to here.
+    }
+}

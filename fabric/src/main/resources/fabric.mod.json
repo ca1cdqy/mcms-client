@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "mcms",
+  "version": "${version}",
+  "name": "MCMS",
+  "description": "在游戏内深度接入 MCMS 城市管理系统的客户端模组",
+  "authors": [
+    "mcms-mod"
+  ],
+  "license": "MIT",
+  "icon": "assets/mcms/icon.png",
+  "environment": "*",
+  "mixins": [
+    "mcms-fabric.mixins.json"
+  ],
+  "entrypoints": {
+    "client": [
+      "hk.flynt.mcms.fabric.McmsModFabricClient"
+    ]
+  },
+  "depends": {
+    "fabric": ">=0.141.6+1.21.11",
+    "minecraft": ">=1.21.11",
+    "architectury": ">=19.0.1"
+  }
+}
