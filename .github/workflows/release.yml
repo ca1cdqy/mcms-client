@@ -1,0 +1,72 @@
+name: Publish Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.loader }})
+    strategy:
+      fail-fast: false
+      matrix:
+        loader: [fabric, neoforge]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Build ${{ matrix.loader }}
+        run: |
+          chmod +x gradlew
+          ./gradlew :${{ matrix.loader }}:build --no-daemon -Penabled_platforms=fabric,neoforge
+
+      - name: Stage production jar
+        shell: bash
+        run: |
+          mkdir -p stage
+          cp ${{ matrix.loader }}/build/libs/*.jar stage/ 2>/dev/null || true
+          # 仅保留生产 jar：去掉 sources / dev-shadow
+          find stage -name '*.jar' \( -name '*sources*' -o -name '*dev-shadow*' \) -delete
+          ls -la stage/
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcms-${{ matrix.loader }}
+          path: stage/*.jar
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download jars
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mcms-*
+          path: dist
+          merge-multiple: true
+
+      - name: List jars
+        run: ls -la dist/
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.jar
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}

@@ -55,3 +55,18 @@ WebSocket `wss://mcms.flynt.hk/api`（JSON 帧 `{key, value, timestamp, msgId}`�
 
 限制：不能新增/删除方法、字段、类，mixin 改动需要重启客户端。
 （注：曾尝试 HotSwapAgent，与 Architectury 的开发热重载冲突，已移除。）
+## 多加载器 / 多版本
+
+- 当前分支：Minecraft 1.21.11，支持 **Fabric** 与 **NeoForge** 两个加载器
+- `common` 代码平台无关；`fabric` / `neoforge` 为各自入口与实现
+- 本地默认只构建 fabric（`enabled_platforms=fabric`）；构建 NeoForge 需额外指定：
+  ```powershell
+  .\gradlew.bat :neoforge:build -Penabled_platforms=fabric,neoforge
+  ```
+  > 注意：本机网络代理会重置 Java 到 maven.neoforged.net 的 TLS 连接，NeoForge 构建请以 CI 结果为准。
+
+## GitHub Actions CI
+
+- `.github/workflows/ci.yml`：push 到 main/26.2 或 PR 时构建 fabric + neoforge
+- `.github/workflows/release.yml`：打 `v*` 标签时构建并在 GitHub Release 发布 jar（每个加载器一个生产 jar，不压缩）
+- 构建命令统一：`./gradlew :<loader>:build -Penabled_platforms=fabric,neoforge`
